@@ -17,8 +17,18 @@ where branches are generally used to capture the occasional large-scale
 development effort.
 
 .. dag::
+   
+         q
+         |
    a-b-3-x
     \ \
      c-1-f-5
            :
            6-7-8
+               |
+               m
+   {node: q, text: bug fix 1, class: nodenote}
+   {node: x, class: bugnode}
+   {node: 8, class: masternode}
+   {node: m, text: master, class: masternote}
+   
