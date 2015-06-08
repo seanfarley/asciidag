@@ -160,6 +160,84 @@ DEFAULT_TIKZ = r'''
 }
 '''
 
+BITBUCKET_TIKZ = r'''
+\definecolor{bbblue}{RGB}{86,175,228}
+\definecolor{bbgreen}{RGB}{158,198,28}
+\definecolor{bbpurple}{RGB}{172,116,176}
+\tikzset{
+  changeset/.style={
+    draw=#1!60,
+    fill=#1!30,
+    line width=1mm,
+    minimum width=3em,
+    minimum height=2em,
+    circle,
+    outer sep=1.5mm,
+  },
+  changeset/.default={gray},
+%%
+  obschangeset/.style={
+    changeset,
+    dashed,
+  },
+  obschangeset/.default={black},
+%%
+  upperT/.style={
+    fill=white,
+    minimum width=0,
+    minimum height=0,
+  },
+%%
+  tmpchangeset/.style={
+    obschangeset,
+    postaction={
+      decorate,
+      decoration={
+        markings,
+        mark=at position 0.5 with {\node[upperT] {\tiny{\textbf{T}}};},
+      },
+    },
+  },
+  tmpchangeset/.default={black},
+%%
+  nodenote/.style={
+    rounded corners,
+    draw=#1!80,
+    fill=#1!20,
+    line width=2pt,
+    inner sep=6pt,
+  },
+  nodenote/.default={bbgreen},
+  bugnode/.style={
+    changeset=bbblue,
+  },
+  masternote/.style={
+    nodenote=bbpurple,
+  },
+  masternode/.style={
+    changeset=bbpurple,
+  },
+%%
+  edge/.style={
+    draw=#1,
+    to-,
+    line width=3pt,
+  },
+  edge/.default={gray!80},
+%%
+  obsedge/.style={
+    edge,
+  },
+  obsedge/.default={gray!80},
+%%
+  markeredge/.style={
+    edge,
+    dotted
+  },
+  markeredge/.default={gray!80},
+}
+'''
+
 DOC_BODY = r'''
 \begin{document}
 \begin{tikzpicture}
@@ -171,6 +249,8 @@ DOC_BODY = r'''
 def dag_style(self):
     if not self.builder.config.dag_latex_preamble:
         self.builder.config.dag_latex_preamble = DEFAULT_TIKZ
+    elif self.builder.config.dag_latex_preamble == 'bitbucket':
+        self.builder.config.dag_latex_preamble = BITBUCKET_TIKZ
     return self.builder.config.dag_latex_preamble
 
 def render_dag(self, dag, libs=''):
