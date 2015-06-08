@@ -30,7 +30,7 @@ sys.path.insert(0, os.path.abspath('_extensions'))
 # ones.
 extensions = [
     'sphinx.ext.todo',
-    'tikz'
+    'asciidag'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
