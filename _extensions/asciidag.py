@@ -95,6 +95,7 @@ DOC_HEAD = r'''
 '''
 
 DEFAULT_TIKZ = r'''
+\tikzset{
   changeset/.style={
     draw=#1,
     thick,
@@ -156,6 +157,7 @@ DEFAULT_TIKZ = r'''
     dotted
   },
   markeredge/.default={black},
+}
 '''
 
 DOC_BODY = r'''
@@ -193,7 +195,7 @@ def render_dag(self, dag, libs=''):
         libs = 'arrows.meta, fadings, graphs, shapes, '
         libs += 'decorations.markings, calc'
     latex = DOC_HEAD % libs
-    latex += r'\tikzset{%s}' % dag_style(self)
+    latex += dag_style(self)
     latex += DOC_BODY % dag
     if isinstance(latex, unicode):
         latex = latex.encode('utf-8')
@@ -319,12 +321,12 @@ def html_visit_dag(self, node):
 
 def latex_visit_daginline(self, node):
     dag = dagmatic.parse(node.get('dag', '')).tikz_string()
-    self.body.append(r'\tikzset{%s}' % dag_style(self))
+    self.body.append(dag_style(self))
     self.body.append(r'\tikz{%s}' % dag)
     raise nodes.SkipNode
 
 def latex_visit_dag(self, node):
-    latex = r'\tikzset{%s}' % dag_style(self)
+    latex = dag_style(self)
     dag = dagmatic.parse(node.get('dag', '')).tikz_string()
     if node['caption']:
         latex += '\\begin{figure}[htp]\\centering\\begin{tikzpicture}' + \
