@@ -51,7 +51,6 @@ except ImportError:
     from sha import sha
 
 from docutils import nodes, utils
-from docutils.parsers.rst import directives
 
 from sphinx.errors import SphinxError
 try:
