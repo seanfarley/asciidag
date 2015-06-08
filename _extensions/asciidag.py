@@ -40,6 +40,7 @@
 
 """
 
+import dagmatic
 import tempfile
 import posixpath
 import shutil
@@ -282,7 +283,7 @@ def html_visit_dag(self, node):
         libs += ',' + node.get('libs')
     libs = libs.replace(' ', '').replace('\t', '').strip(', ')
     fname = None
-    dag = node.get('dag')
+    dag = dagmatic.parse(node.get('dag', '')).tikz_string()
     caption = node.get('caption')
 
     try:
@@ -317,29 +318,20 @@ def html_visit_dag(self, node):
     raise nodes.SkipNode
 
 def latex_visit_daginline(self, node):
-    dag = node['dag']
-    if dag[0] == '[':
-        cnt, pos = 1, 1
-        while cnt > 0 and cnt < len(dag):
-            if dag[pos] == '[':
-                cnt = cnt + 1
-            if dag[pos] == ']':
-                cnt = cnt - 1
-            pos = pos + 1
-        dag = dag[:pos] + '{' + dag[pos:]
-    else:
-        dag = '{' + dag
-    self.body.append('\\tikz' + dag + '}')
+    dag = dagmatic.parse(node.get('dag', '')).tikz_string()
+    self.body.append(r'\tikzset{%s}' % dag_style(self))
+    self.body.append(r'\tikz{%s}' % dag)
     raise nodes.SkipNode
 
 def latex_visit_dag(self, node):
     latex = r'\tikzset{%s}' % dag_style(self)
+    dag = dagmatic.parse(node.get('dag', '')).tikz_string()
     if node['caption']:
         latex += '\\begin{figure}[htp]\\centering\\begin{tikzpicture}' + \
-                 node['dag'] + '\\end{tikzpicture}' + '\\caption{' + \
+                 dag + '\\end{tikzpicture}' + '\\caption{' + \
                  self.encode(node['caption']).strip() + '}\\end{figure}'
     else:
-        latex += '\\begin{center}\\begin{tikzpicture}' + node['dag'] + \
+        latex += '\\begin{center}\\begin{tikzpicture}' + dag + \
                  '\\end{tikzpicture}\\end{center}'
     self.body.append(latex)
 
