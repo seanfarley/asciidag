@@ -288,6 +288,9 @@ DOC_BODY = r'''
 \end{document}
 '''
 
+DEFAULT_LIBS = ('arrows.meta, fadings, graphs, shapes, '
+                'decorations.markings, calc')
+
 def dag_style(self):
     if not self.builder.config.dag_latex_preamble:
         self.builder.config.dag_latex_preamble = DEFAULT_TIKZ
@@ -314,8 +317,7 @@ def render_dag(self, dag, libs=''):
     curdir = os.getcwd()
 
     if not libs:
-        libs = 'arrows.meta, fadings, graphs, shapes, '
-        libs += 'decorations.markings, calc'
+        libs = DEFAULT_LIBS
     latex = DOC_HEAD % libs
     latex += dag_style(self)
     latex += DOC_BODY % dag
@@ -494,9 +496,16 @@ def setup(app):
                  latex=(latex_visit_daginline, depart_dag))
     app.add_role('dag', dag_role)
     app.add_directive('dag', DagDirective)
-    app.add_config_value('dag_latex_preamble', '', 'html')
-    app.add_config_value('dag_tikzlibraries', '', 'html')
-    app.add_config_value('dag_transparent', True, 'html')
+    app.add_config_value('dag_latex_preamble', '', 'env')
+    app.add_config_value('dag_tikzlibraries', '', 'env')
+    app.add_config_value('dag_transparent', True, 'env')
+
+    # this needs to be set early; if the user specifies a preamble in conf.py
+    # then this is overwritten
+    latex = app.config['latex_elements']
+    if not latex.get('preamble'):
+        latex['preamble'] = r'\usepackage{tikz}'
+        latex['preamble'] += r'\usetikzlibrary{%s}' % DEFAULT_LIBS
 
     # fallback to another value depending what is on the system
     suite = 'pdf2svg'
