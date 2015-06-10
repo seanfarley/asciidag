@@ -18,6 +18,15 @@ development effort.
 
 .. dag::
    
+   a-b
+    \
+     c
+
+   {node: a, text: foo}
+
+
+.. dag::
+   
          q
          |
    a-b-3-x
@@ -31,4 +40,34 @@ development effort.
    {node: x, class: bugnode}
    {node: 8, class: masternode}
    {node: m, text: master, class: masternote}
+
+
+.. dag:: Figure 1: unsafe history modification with core Mercurial (not
+   using ``evolve``): the original revision 1 is destroyed.
    
+   0-1
+
+   || hg commit --amend
+   || (destructive, not using evolve)
+
+   0-p
+    \
+     1'
+   {node: p, class: poof, text: poof!}
+
+
+
+.. dag:: Figure 2: safe history modification using ``evolve``: the original
+   revision 1 is preserved as an obsolete changeset. (The "temporary amend
+   commit", marked with T, is an implementation detail stemming from
+   limitations in Mercurial's current merge machinery. Future versions of
+   Mercurial will not create them.)
+
+   0-1
+
+   || hg commit --amend
+   || (safe, using evolve)
+
+   0-1-2^T
+    \:
+     3
