@@ -45,21 +45,23 @@ import tempfile
 import posixpath
 import shutil
 import os
+
 from subprocess import Popen, PIPE
+from docutils import nodes, utils, core
+from docutils.statemachine import ViewList
+from sphinx.util.compat import Directive
+
+from sphinx.errors import SphinxError
+
 try:
     from hashlib import sha1 as sha
 except ImportError:
     from sha import sha
 
-from docutils import nodes, utils
-
-from sphinx.errors import SphinxError
 try:
     from sphinx.util.osutil import ensuredir, ENOENT
 except ImportError:
     from sphinx.util import ensuredir, ENOENT
-
-from sphinx.util.compat import Directive
 
 class DagExtError(SphinxError):
     category = 'ASCII DAG extension error'
