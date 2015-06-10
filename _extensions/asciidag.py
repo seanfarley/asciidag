@@ -157,6 +157,15 @@ DEFAULT_TIKZ = r'''
     dotted
   },
   markeredge/.default={black},
+%%
+  poof/.style={
+    draw,
+    starburst,
+    line width=1pt,
+    starburst points=11,
+    starburst point height=0.35cm,
+    inner sep=0.05cm,
+  },
 }
 '''
 
@@ -235,6 +244,16 @@ BITBUCKET_TIKZ = r'''
     dotted
   },
   markeredge/.default={gray!80},
+%%
+  poof/.style={
+    draw=gray!80,
+    fill=gray!20,
+    line width=2pt,
+    starburst,
+    starburst points=11,
+    starburst point height=0.35cm,
+    inner sep=0.05cm,
+  },
 }
 '''
 
