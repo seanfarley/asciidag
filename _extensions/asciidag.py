@@ -226,7 +226,7 @@ BITBUCKET_TIKZ = r'''
       decorate,
       decoration={
         markings,
-        mark=at position 0.5 with {\node[upperT] {\tiny{\textbf{T}}};},
+        mark=at position 0.1 with {\node[upperT] {\tiny{\textbf{T}}};},
       },
     },
   },
