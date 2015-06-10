@@ -44,6 +44,7 @@ import dagmatic
 import tempfile
 import posixpath
 import shutil
+import sphinx
 import os
 
 from subprocess import Popen, PIPE
@@ -89,6 +90,26 @@ class DagDirective(Directive):
         if not self.content:
             node['caption'] = ''
             node['dag'] = '\n'.join(self.arguments)
+
+        node['bugfixed'] = False
+        try:
+            if sphinx.version_info[0] >= 1 and sphinx.version_info[1] >= 4:
+                node['bugfixed'] = True
+        except AttributeError:
+            pass
+
+        if node['bugfixed'] and node['caption']:
+            figure_node = nodes.figure('', node)
+            parsed = nodes.Element()
+            self.state.nested_parse(ViewList([node['caption']], source=''),
+                                    self.content_offset, parsed)
+            caption_node = nodes.caption(parsed[0].rawsource, '',
+                                         *parsed[0].children)
+            caption_node.source = parsed[0].source
+            caption_node.line = parsed[0].line
+            figure_node += caption_node
+            node = figure_node
+
         return [node]
 
 DOC_HEAD = r'''
@@ -388,6 +409,7 @@ def html_visit_dag(self, node):
     fname = None
     dag = dagmatic.parse(node.get('dag', '')).tikz_string()
     caption = node.get('caption')
+    bugfixed = node.get('bugfixed', False)
 
     try:
         fname = render_dag(self, dag, libs)
@@ -413,9 +435,12 @@ def html_visit_dag(self, node):
             self.body.append('<p>')
         self.body.append('<img src="%s" alt="%s" /></p>\n' %
                          (fname, self.encode(node['dag']).strip()))
-        if caption:
+        if caption and not bugfixed:
+            # convert the caption to html
+            caption = core.publish_parts(node['caption'],
+                                         writer_name='html')['body']
             self.body.append('<p class="caption">%s</p>' %
-                             self.encode(caption).strip())
+                             caption.strip())
         if node.tagname == 'dag':
             self.body.append('</div>')
     raise nodes.SkipNode
@@ -430,9 +455,11 @@ def latex_visit_dag(self, node):
     latex = dag_style(self)
     dag = dagmatic.parse(node.get('dag', '')).tikz_string()
     if node['caption']:
+        caption = core.publish_parts(node['caption'],
+                                     writer_name='latex')['body']
         latex += '\\begin{figure}[htp]\\centering\\begin{tikzpicture}' + \
                  dag + '\\end{tikzpicture}' + '\\caption{' + \
-                 self.encode(node['caption']).strip() + '}\\end{figure}'
+                 caption.strip() + '}\\end{figure}'
     else:
         latex += '\\begin{center}\\begin{tikzpicture}' + dag + \
                  '\\end{tikzpicture}\\end{center}'
