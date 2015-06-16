@@ -18,6 +18,13 @@ development effort.
 
 .. dag::
    
+   1-2-3
+      \
+       4
+
+
+.. dag::
+   
    a-b
     \
      c
