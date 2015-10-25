@@ -79,6 +79,8 @@ class TransitionText(Node):
     def parse(self, nodes, grid, row, col):
         super(TransitionText, self).parse(nodes, grid, row, col)
         try:
+            # currently transition texts must be next to each other (no extra
+            # new lines)
             prevtext = grid[row - 1][col]
             if isinstance(prevtext, TransitionText):
                 prevtext.append(self)
