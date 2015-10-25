@@ -88,7 +88,17 @@ class TransitionText(Node):
                 if self in nodes:
                     nodes.remove(self)
         except IndexError:
-            pass
+            # find the previous, longest row of nodes so that we can center the
+            # double down arrow
+            longrow = prevrow = []
+            for r in xrange(row - 1, -1, -1):
+                prevrow = [e for e in grid[r] if e]
+                if len(prevrow) > len(longrow):
+                    longrow = prevrow
+            c = len(longrow)
+            self.middle = [longrow[c / 2]]
+            if not isinstance(self.middle, Node):
+                self.middle = [longrow[c / 2 - 1], longrow[c / 2 + 1]]
 
     def tikz(self, outfile):
         lines = self.text.splitlines()
