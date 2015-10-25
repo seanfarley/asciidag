@@ -101,14 +101,19 @@ class TransitionText(Node):
                 self.middle = [longrow[c / 2 - 1], longrow[c / 2 + 1]]
 
     def tikz(self, outfile):
+        anchor = r'($(%s.south)$)' % self.middle[0]
+        if len(self.middle) > 1:
+            anchor = r'$.5*(%s.south) + .5*(%s.south)$' % (self.middle[0],
+                                                           self.middle[1])
+
         lines = self.text.splitlines()
         # the first line is a command, the rest are subtexts
         lines[0] = r'\small{\texttt{%s}}' % lines[0]
         for i in xrange(1, len(lines)):
             lines[i] = r'\scriptsize\emph{%s}' % lines[i]
         print('\\draw[double, double equal sign distance, -Implies] '
-              '(%d,%d) -- node[anchor=west, align=left] (%s) {%s} '
-              '++(0,%d);' % (self.col - 1, -(self.row - 1), self,
+              '(%s,%d) -- node[anchor=west, align=left] (%s) {%s} '
+              '++(0,%d);' % (anchor, -(self.row - 1), self,
                              '\\\\'.join(lines), -(len(lines) + 1)),
               file=outfile)
 
