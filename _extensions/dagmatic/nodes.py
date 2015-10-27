@@ -111,10 +111,16 @@ class TransitionText(Node):
         lines[0] = r'\small{\texttt{%s}}' % lines[0]
         for i in xrange(1, len(lines)):
             lines[i] = r'\scriptsize\emph{%s}' % lines[i]
-        print('\\draw[double, double equal sign distance, -Implies] '
-              '(%s,%d) -- node[anchor=west, align=left] (%s) {%s} '
-              '++(0,%d);' % (anchor, -(self.row - 1), self,
-                             '\\\\'.join(lines), -(len(lines) + 1)),
+        print('\\draw[line width=5pt, -{Latex[length=7mm]}, draw=gray!80] '
+              '(%s,%.2f) -- node[midway, anchor=west, align=left] (%s) {%s} '
+              '++(0,%.2f);' % (anchor, -(self.row - 1), self,
+                               '\\\\'.join(lines), -(len(lines) + 1.5)),
+              file=outfile)
+
+        # print second arrow ontop of the first to produce an outlined arrow
+        print('\\draw [line width=3pt, -{Latex[length=5mm]}, draw=white] '
+              '(%s,%.2f) -- ++(0,%.2f);' % (anchor, -(self.row - 1),
+                                            -(len(lines) + 1.35)),
               file=outfile)
 
 
